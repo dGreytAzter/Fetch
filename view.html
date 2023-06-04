@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,400&family=Montserrat:wght@200;300;500&family=Poppins:wght@200;300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <title>View Movie</title>
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        #title {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        #release_date {
+            font-style: italic;
+        }
+
+        #description {
+            font-size: 1.3rem;
+        }
+
+        #genre {
+            font-style: italic;
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <section class="container fluid d-flex justify-content-between mt-5">
+        <div class="mt-5 p-3">
+            <img src="" id="poster_url">
+        </div>
+
+        <div class="mt-5">
+            <di id="title"></di>
+            <div class="mt-1" id="release_date"></div>
+            <div class="mt-3" id="description"></div>
+            <div class="mt-1" id="genre"></div>
+        </div>
+    </section>
+
+    <script>
+        const url = new URL(window.location.href)
+        const params = new URLSearchParams(url.search)
+
+        const displayData = () => {
+            const movies = JSON.parse(localStorage.getItem('movies'))
+            const indexMovie = movies.map(movies => movies._id).indexOf(params.get('id'))
+            const selectMovie = movies[indexMovie]
+
+            for (i = 0; i < movies.length; i++) {
+                const viewImage = document.querySelector('#poster_url')
+                viewImage.src = selectMovie.poster_url
+
+                const viewTitle = document.querySelector('#title')
+                viewTitle.innerHTML = selectMovie.title
+
+                const viewDescription = document.querySelector('#description')
+                viewDescription.innerHTML = selectMovie.description
+
+                const viewReleaseDate = document.querySelector('#release_date')
+                viewReleaseDate.innerHTML = selectMovie.release_date
+            }
+
+            const genres = JSON.parse(localStorage.getItem('genres'))
+
+            for (let j = 0; j < genres.length; j++) {
+                const viewGenre = document.querySelector('#genre')
+                viewGenre.innerHTML = selectMovie.genre
+            }
+        }
+
+        displayData()
+
+    </script>
+</body>
+
+</html>
