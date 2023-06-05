@@ -23,6 +23,7 @@
         </div>
         <div class="row">
             <div class="col">
+                <input class="form-control border-0 border-bottom" id="searchInput" placeholder="Type to search...">
                 <!-- Table to display movies -->
                 <table class="table table-striped">
                     <thead>
@@ -179,7 +180,7 @@
     <!-- JavaScript code -->
     <script>
         // API URL for CRUD operations
-        const url = 'https://crudcrud.com/api/b011d43ef1e048dfa1f12977df97917f'
+        const url = 'https://crudcrud.com/api/531360fbefde43e7932b6fd7b8102cfe'
 
         // Function to get genres from API or localStorage
         const getGenres = async () => {
@@ -252,7 +253,32 @@
             }
 
             const movies = JSON.parse(localStorage.getItem("movies"))
+            generateMovies(movies)
 
+            const searchMovies = document.getElementById('searchInput')
+            searchMovies.addEventListener("keyup", (event) => {
+                    const searchValue = event.target.value
+
+                if(searchValue.length >= 3) {
+                    const options = {
+                        includeScore: true,
+                        keys: ['title']
+                    }
+
+                    const fuse = new Fuse(movies, options)
+
+                    const result = fuse.search(searchValue)
+                    const resultMovies = result.map(row => row.item)
+                    generateMovies(resultMovies)
+                } else {
+                    generateMovies(movies)
+                }
+            })
+        }
+        // Call the function to get movies
+        getMovies()
+
+        function generateMovies(movies) {
             const movieTableBody = document.getElementById('movieTableBody')
             movieTableBody.innerHTML = ''
             let rows = ''
@@ -279,8 +305,6 @@
 
             movieTableBody.innerHTML = rows
         }
-        // Call the function to get movies
-        getMovies()
 
         // Function to open the new movie modal
         const openNewMovieModal = () => {
@@ -470,6 +494,11 @@
                     console.log(error)
                 })
         })
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+    <script type="module">
+        import Fuse from 'https://cdn.jsdelivr.net/npm/fuse.js@6.6.2/dist/fuse.esm.js'
     </script>
 </body>
 
