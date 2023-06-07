@@ -180,19 +180,14 @@
     <!-- JavaScript code -->
     <script>
         // API URL for CRUD operations
-        const url = 'https://crudcrud.com/api/531360fbefde43e7932b6fd7b8102cfe'
+        const url = 'https://647eff7bc246f166da8fdb07.mockapi.io'
 
         // Function to get genres from API or localStorage
         const getGenres = async () => {
-            if (localStorage.getItem("genres") === null) {
-                // Fetch genres from API and store in localStorage
-                await fetch(`${url}/genres`)
-                    .then(response => response.json())
-                    .then(genres => localStorage.setItem("genres", JSON.stringify(genres)))
-                    .catch(error => console.log(error))
-            }
 
-            const genres = JSON.parse(localStorage.getItem("genres"))
+            const response = await fetch(`${url}/genres`);
+            const genres = await response.json();
+            
             const genreDropdown = document.getElementById('genre')
             genreDropdown.innerHTML = ''
 
@@ -230,29 +225,29 @@
         getGenres()
 
         // Function to get the title of a genre based on its ID
-        const getGenreTitle = (id) => {
-            const genres = JSON.parse(localStorage.getItem("genres"))
-            let title = 'Invalid genre'
+        const getGenreTitle = async (id) => {
+
+            const responseGenres = await fetch(`${url}/movies`)
+            const genres = await responseGenres.json()   
+            console.log(genres) 
 
             // Find the index of the genre with the given ID
-            const index = genres.map(genre => genre._id).indexOf(id)
+            
+            const index = genres.map(genre => genre._id)
+            console.log(genres.map(genre => genre._id))
             if (index > -1) {
                 title = genres[index].title
             }
             return title
         }
+        getGenreTitle()
 
         // Function to get movies from API or localStorage
         const getMovies = async () => {
-            if (localStorage.getItem("movies") === null) {
-                // Fetch movies from API and store in localStorage
-                await fetch(`${url}/movies`)
-                    .then(response => response.json())
-                    .then(movies => localStorage.setItem("movies", JSON.stringify(movies)))
-                    .catch(error => console.log(error))
-            }
+            const response = await fetch(`${url}/movies`)
+            const movies = await response.json()
+            console.log(movies)
 
-            const movies = JSON.parse(localStorage.getItem("movies"))
             generateMovies(movies)
 
             const searchMovies = document.getElementById('searchInput')
@@ -262,7 +257,7 @@
                 if(searchValue.length >= 3) {
                     const options = {
                         includeScore: true,
-                        keys: ['title']
+                        keys: ['title', 'description', 'genreTitle']
                     }
 
                     const fuse = new Fuse(movies, options)
@@ -344,7 +339,6 @@
                     newMovieModal.hide()
 
                     // Remove movies from localStorage and refresh the movie list
-                    localStorage.removeItem("movies")
                     getMovies()
 
                     // Clear form input fields
@@ -370,7 +364,6 @@
                 })
                     .then(response => {
                         // Remove movies from localStorage and refresh the movie list
-                        localStorage.removeItem("movies")
                         getMovies()
                     })
                     .catch(error => {
@@ -384,7 +377,8 @@
         editMovieButtons.forEach(button => {
             button.addEventListener('click', event => {
                 const movieId = event.target.getAttribute('data-movie')
-                const movies = JSON.parse(localStorage.getItem("movies"))
+                const movies = fetch(`${url}/movies`);
+                console.log(movies)
                 // Find the index of the movie with the given movieId
                 const index = movies.map(movie => movie._id).indexOf(movieId)
                 const selectedMovie = movies[index]
@@ -436,7 +430,6 @@
                     updateMovieModal.hide()
 
                     // Remove movies from localStorage and refresh the movie list
-                    localStorage.removeItem("movies")
                     getMovies()
 
                     // Clear form input fields
@@ -480,7 +473,6 @@
                     newMovieModal.show()
 
                     // Remove genres from localStorage and refresh the genre list
-                    localStorage.removeItem("genres")
                     await getGenres()
 
                     // Clear form input fields
