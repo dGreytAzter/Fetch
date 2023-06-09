@@ -187,6 +187,7 @@
 
             const response = await fetch(`${url}/genres`);
             const genres = await response.json();
+            console.log(genres)
             
             const genreDropdown = document.getElementById('genre')
             genreDropdown.innerHTML = ''
@@ -225,22 +226,13 @@
         getGenres()
 
         // Function to get the title of a genre based on its ID
-        const getGenreTitle = async (id) => {
+        const getGenreTitle = async () => {
 
-            const responseGenres = await fetch(`${url}/movies`)
-            const genres = await responseGenres.json()   
+            const fetchData = await fetch(`${url}/movies/${_id}`)
+            const genres = await fetchData.json() 
             console.log(genres) 
-
-            // Find the index of the genre with the given ID
             
-            const index = genres.map(genre => genre._id)
-            console.log(genres.map(genre => genre._id))
-            if (index > -1) {
-                title = genres[index].title
-            }
-            return title
         }
-        getGenreTitle()
 
         // Function to get movies from API or localStorage
         const getMovies = async () => {
@@ -277,7 +269,6 @@
             const movieTableBody = document.getElementById('movieTableBody')
             movieTableBody.innerHTML = ''
             let rows = ''
-
             for (let i = 0; i < movies.length; i++) {
                 // Create rows for each movie and append to the table body
                 rows += `<tr>
@@ -285,7 +276,7 @@
                             <td>
                                 <a href="view.html?id=${movies[i]._id}">${movies[i].title}</a>    
                             </td>
-                            <td>${movies[i].genre}</td>
+                            <td>${getGenreTitle(`${movies[i].genre}`)}</td>
                             <td>${movies[i].release_date}</td>
                             <td>
                                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
